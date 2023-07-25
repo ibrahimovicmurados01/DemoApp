@@ -15,8 +15,8 @@ Here are main tables to highlight:
 
 | Table | Description |
 | ------ | ------ |
-| `user` | table contains the users information (aba system users).  
-| `contact` | table contains contact information. Consider that the person infos are also in the same table. |
+| `users` | table contains the users information (DemoApp system users).  
+| `contracts` | table contains contact information. Consider that the person infos are also in the same table. |
 
 
 ##### Disclaimer:
@@ -37,11 +37,11 @@ Used techs:
 * xunit for running unit tests
 ```
 
-The code consist of **4 main projects** (`DemoApp.WEB/DemoApp.Contracts/DemoApp.EntitiesDemoAppAba.Repositories`) and plus **2 test projects** (`DemoApp.Web.Tests/DemoApp.Repository.Tests`).
+The code consist of **4 main projects** (`DemoApp.WEB/DemoApp.Contracts/DemoApp.Entities/DemoApp.Repositories`) and plus **2 test projects** (`DemoApp.Web.Tests/DemoApp.Repository.Tests`).
 
 ##### DemoApp.Repository
 ```
-This project consist of implementation of Data access layer. Based on the explanatory name in aba Repository pattern is being used. You can find some `decorators` for standard repository implementation. My advice is to go through these decorators and understand how they work.
+This project consist of implementation of Data access layer. Based on the explanatory name in DemoApp Repository pattern is being used. You can find some `decorators` for standard repository implementation. My advice is to go through these decorators and understand how they work.
 ```
 ##### DemoApp.Entities
 ```
