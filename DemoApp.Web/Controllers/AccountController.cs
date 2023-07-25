@@ -7,6 +7,8 @@ using System.Reflection.Metadata.Ecma335;
 using AutoMapper;
 using DemoApp.Contracts;
 using Microsoft.CodeAnalysis.Scripting;
+using DemoApp.Repository;
+using Microsoft.Extensions.Options;
 
 namespace DemoApp.Web.Controllers
 {
@@ -14,32 +16,44 @@ namespace DemoApp.Web.Controllers
     {
         private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
+
+    
         public AccountController(IRepositoryWrapper repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
         }
-        public IActionResult Index()
-        {
-            return View();
-        }
-
+    
         public IActionResult LogIn()
         {
             return View();
         }
 
-
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogIn(SignInModel model)
         {
-            if (ValidateUser(model.UserName, model.Password))
+            string userID=string.Empty;
+            if (ValidateUser(model.UserName, model.Password ,out userID))
             {
-                // Successful login: Create and store user data in the session
-                HttpContext.Session.SetString("UserName", model.UserName);
+
+                var sharedUserData = new
+                {
+                    model.UserName,
+                    UserId = userID
+                };
+
+                // Convert the shared object to JSON
+                string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(sharedUserData);
+
+                var cookieOptions = new CookieOptions();
+            
+                cookieOptions.Expires = DateTime.Now.AddDays(1);
+                cookieOptions.Path = "/";
+
+                Response.Cookies.Append("SessionUserData", jsonData, cookieOptions);
+            
+
                 return RedirectToAction("Index", "Home");
             }
 
@@ -47,19 +61,20 @@ namespace DemoApp.Web.Controllers
             return View(model);
         }
 
-        public IActionResult Logout()
+        public IActionResult SignOut()
         {
             // Log out the user: Remove user data from the session
-            HttpContext.Session.Clear();
+            Response.Cookies.Delete("SessionUserData");
             return RedirectToAction("Login");
         }
-        private bool ValidateUser(string userName, string password)
+        private bool ValidateUser(string userName, string password,  out string userId)
         {
-
+            userId=string.Empty;
             var existingUser = _repository.User.FindBy(x => x.Username == userName).FirstOrDefault();
             if (existingUser != null)
             {
                 bool verified = BCrypt.Net.BCrypt.Verify(password, existingUser.HashedPassword);
+                userId = existingUser.Id.ToString();
               
                 return verified;
             }

@@ -3,6 +3,7 @@ using DemoApp.Entities.Models.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -33,5 +34,6 @@ namespace DemoApp.Repository.Decorators
         {
             return base.GetAll().Where(r => r.Tombstoned == false);
         }
+    
     }
 }

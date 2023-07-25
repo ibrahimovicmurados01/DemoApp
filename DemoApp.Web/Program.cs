@@ -26,7 +26,7 @@ builder.Services.AddDbContext<RepositoryContext>(x =>
 
 builder.Services.AddRepository();
 
-
+//builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddSession(options =>
 {
