@@ -69,8 +69,10 @@ Deployments:
 1. DemoApp.Web
 *In this project the web application is deployed and running.*
 You have to run below docker commands to create docker images and then you can create docker container to run application
-*docker build -t demoapp:v1 .
-*docker run -d -p 5000:5000 --name app1 {imageId}
+
+docker build -t demoapp:v1 .
+docker run -d -p 5000:5000 --name app1 {imageId}
+
 2. mssql-deployment
 *The mssql is deployed in this deployment.*
 
