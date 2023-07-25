@@ -33,7 +33,6 @@ Used techs:
 * entity framework core (to mssql)
 * Moq for mocking in unit tests
 * parameterized tests for generic CRUD usecases (functional tests). Unfortunately not everything is covered by tests.
-* Serilog for logging
 * xunit for running unit tests
 ```
 
