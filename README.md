@@ -67,7 +67,7 @@ The flow starts from the Cotrollers package and from there moves to Repositories
 
 Deployments: 
 1. DemoApp.Web
-*In this pod the frontend application is deployed and running.*
+*In this project the web application is deployed and running.*
 2. mssql-deployment
 *The mssql is deployed in this deployment.*
 

@@ -60,7 +60,24 @@ namespace DemoApp.Web.Controllers
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
             return View(model);
         }
+     
 
+        public IActionResult SignUp()
+        {
+            return View();
+        }
+        [HttpPost]
+        public IActionResult SignUp(SignUpModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else {
+                return View(model);
+            }
+           
+        }
         public IActionResult SignOut()
         {
             // Log out the user: Remove user data from the session
