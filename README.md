@@ -1,11 +1,11 @@
-# ABA project description
+# DemoApp project description
 
 ---
 
 ## Summary
-> Aba project is supposed to serve as a .NET backend REST api.
+> DemoApp project is supposed to serve as a .NET web application.
 Overall the codebase consist of c# code and some shell script for deployment.
-The project is being deployed as a linux container on kubernetes. Consider that the project is using .NET core framework which supports crossplatform. In this readme file we will cover aspects of the project including the database and infrastructure high level description
+ Consider that the project is using .NET core framework which supports crossplatform. In this readme file we will cover aspects of the project including the database and infrastructure high level description
 
 ---
 
