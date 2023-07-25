@@ -1,0 +1,74 @@
+# ABA project description
+
+---
+
+## Summary
+> Aba project is supposed to serve as a .NET backend REST api.
+Overall the codebase consist of c# code and some shell script for deployment.
+The project is being deployed as a linux container on kubernetes. Consider that the project is using .NET core framework which supports crossplatform. In this readme file we will cover aspects of the project including the database and infrastructure high level description
+
+---
+
+## Database structure
+In the project the entity framework (ef core) as a orm is being used.
+Here are main tables to highlight:
+
+| Table | Description |
+| ------ | ------ |
+| `user` | table contains the users information (aba system users).  
+| `contact` | table contains contact information. Consider that the person infos are also in the same table. |
+
+
+##### Disclaimer:
+* In the important tables where we want to keep track of the data, we have `tombstoned` column. It means that when we delete smth in the system, the row is beign deleted actually but just `tombstoned` column becomes true.
+* In almost all tables we have also `created` and `modified` columns
+
+---
+
+## High-level code description
+
+```
+Used techs:
+* dotnet core version 7.x
+* entity framework core (to mssql)
+* Moq for mocking in unit tests
+* parameterized tests for generic CRUD usecases (functional tests). Unfortunately not everything is covered by tests.
+* Serilog for logging
+* xunit for running unit tests
+```
+
+The code consist of **4 main projects** (`DemoApp.WEB/DemoApp.Contracts/DemoApp.EntitiesDemoAppAba.Repositories`) and plus **2 test projects** (`DemoApp.Web.Tests/DemoApp.Repository.Tests`).
+
+##### DemoApp.Repository
+```
+This project consist of implementation of Data access layer. Based on the explanatory name in aba Repository pattern is being used. You can find some `decorators` for standard repository implementation. My advice is to go through these decorators and understand how they work.
+```
+##### DemoApp.Entities
+```
+This project consist of entities which is used with ef core in order to be synced with database. Basically this is database entities.
+```
+##### DemoApp.Contracts
+```
+I would say that this project were supposed to include the interfaces which are going to be used between DAO layer and Web layer, but it ended up only having 2 interfaces. They can be moved to Repository project.
+```
+##### DemoApp.Web
+```
+Web project is using the `MVC pattern` (check in the internet). GET/PUT/POST/DELETE Controller action are separated into different classes and generic implementations are provided for standard usecase.
+The flow starts from the Cotrollers package and from there moves to Repositories pattern which is using the DAO and Mapper. Mappers are provided also in the project in order to separate the `Entities` and `Models`.
+
+```
+
+---
+
+
+---
+
+## High-level infrastructure description
+
+Deployments: 
+1. DemoApp.Web
+*In this pod the frontend application is deployed and running.*
+2. mssql-deployment
+*The mssql is deployed in this deployment.*
+
+---
