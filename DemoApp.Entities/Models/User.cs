@@ -19,7 +19,8 @@ namespace DemoApp.Entities.Models
         [EmailAddress][Required] public string Email { get; set; }
         [Required] public string HashedPassword { get; set; }
 
-
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public DateTimeOffset? LastSigninDate { get; set; }
 
         #region  Dervived properties
