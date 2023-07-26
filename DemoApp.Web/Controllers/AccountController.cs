@@ -54,6 +54,11 @@ namespace DemoApp.Web.Controllers
         {
             return View();
         }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
         [HttpPost]
         public async Task<IActionResult> SignUp(SignUpModel model)
         {
@@ -65,7 +70,7 @@ namespace DemoApp.Web.Controllers
                     LastName = model.LastName,
                     HashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password),
                     Email = model.Email,
-                    Username = model.FirstName + "_" + model.LastName
+                    Username = model.FirstName.ToLower() + "_" + model.LastName.ToLower()
                 };
                 var registeredUser = await _repository.User.CreateAsync(user);
                 await _repository.SaveAsync();
