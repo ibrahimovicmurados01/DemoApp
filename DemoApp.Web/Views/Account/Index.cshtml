@@ -1,7 +1,31 @@
-﻿
+﻿@model DemoApp.Web.Models.UserModel
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>User information</h1>
 
+<div>
+    <dl class="row">
+      
+        <dt class="col-2">
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+        <dd class="col-10">
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+        <dt class="col-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-2">
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+        <dd class="col-10">
+            @Html.DisplayFor(model => model.Created)
+        </dd>
+ 
+    </dl>
+</div>

@@ -11,19 +11,36 @@ using DemoApp.Repository;
 using Microsoft.Extensions.Options;
 using DemoApp.Entities.Models;
 using System.Security.Cryptography.Xml;
+using System.Linq.Expressions;
+using System.Collections.Generic;
 
 namespace DemoApp.Web.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : BaseController
     {
         private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
-
 
         public AccountController(IRepositoryWrapper repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            UserModel userModel = null;
+            // Get the user information from the cookie
+            var sharedUser = UserFromCookie;
+            if (sharedUser != null)
+            {
+                // Retrieve information associated with the current user from the database
+                var user =  _repository.User.FindBy(x => x.Id == sharedUser.UserId).FirstOrDefault();
+
+                // Map the contacts to ContactModel using the _mapper
+                userModel = _mapper.Map<UserModel>(user);
+            }
+            return View(userModel);
         }
 
         public IActionResult LogIn()
@@ -35,13 +52,9 @@ namespace DemoApp.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LogIn(SignInModel model)
         {
-            string userID = string.Empty;
-            if (ValidateUser(model.UserName, model.Password, out userID))
+            if (ValidateUser(model.UserName, model.Password, out string userID))
             {
-
-
-                WriteCookie(model.UserName, userID);
-
+                CreateSessionCookie(model.UserName, userID);
                 return RedirectToAction("Index", "Home");
             }
 
@@ -49,80 +62,93 @@ namespace DemoApp.Web.Controllers
             return View(model);
         }
 
-
         public IActionResult SignUp()
         {
             return View();
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
         [HttpPost]
         public async Task<IActionResult> SignUp(SignUpModel model)
         {
             if (ModelState.IsValid)
             {
+                string uniqueUsername = GenerateUniqueUsername(model.FirstName, model.LastName);
+
                 User user = new User()
                 {
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     HashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password),
                     Email = model.Email,
-                    Username = model.FirstName.ToLower() + "_" + model.LastName.ToLower()
+                    Username = uniqueUsername
                 };
+
                 var registeredUser = await _repository.User.CreateAsync(user);
                 await _repository.SaveAsync();
-                WriteCookie(registeredUser.Username,registeredUser.Id.ToString());
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                return View(model);
+
+                if (registeredUser != null)
+                {
+                    CreateSessionCookie(registeredUser.Username, registeredUser.Id.ToString());
+                    return RedirectToAction("Index", "Home");
+                }
+
+                ModelState.AddModelError(string.Empty, "An error occurred while signing up. Please try again later.");
             }
 
+            // If ModelState is not valid, return the same view with validation errors
+            return View(model);
         }
+
         public IActionResult SignOut()
         {
-            // Log out the user: Remove user data from the session
+            // Clear user data from the session by deleting the cookie
             Response.Cookies.Delete("SessionUserData");
+
+            // Redirect to the "Login" action
             return RedirectToAction("Login");
         }
+
         private bool ValidateUser(string userName, string password, out string userId)
         {
-            userId = string.Empty;
-            var existingUser = _repository.User.FindBy(x => x.Username == userName).FirstOrDefault();
+            userId = null;
+
+            // Ensure userName is not null or empty
+            if (string.IsNullOrEmpty(userName))
+            {
+                return false;
+            }
+
+            // Find the user based on the search criteria
+            User existingUser = _repository.User.FindBy(x => x.Email == userName || x.Username == userName).SingleOrDefault();
+
+            // If a user is found, verify the password
             if (existingUser != null)
             {
                 bool verified = BCrypt.Net.BCrypt.Verify(password, existingUser.HashedPassword);
                 userId = existingUser.Id.ToString();
-
                 return verified;
             }
 
             return false;
         }
+             
 
-        private void WriteCookie(string userName, string userId)
+        // Generate a unique username based on the first name and last name
+        private string GenerateUniqueUsername(string firstName, string lastName)
         {
+            
+            string baseUsername = $"{firstName.ToLower()}_{lastName.ToLower()}";
+            string uniqueUsername = baseUsername;
 
-
-            var sharedUserData = new
+            int counter = 1;
+            while (_repository.User.FindBy(u => u.Username == uniqueUsername).FirstOrDefault() != null)
             {
-                UserName = userName,
-                UserId = userId
-            };
+                uniqueUsername = $"{baseUsername}_{counter}";
+                counter++;
+            }
 
-            // Convert the shared object to JSON
-            string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(sharedUserData);
-
-            var cookieOptions = new CookieOptions();
-
-            cookieOptions.Expires = DateTime.Now.AddDays(1);
-            cookieOptions.Path = "/";
-
-            Response.Cookies.Append("SessionUserData", jsonData, cookieOptions);
+            return uniqueUsername;
         }
     }
+
 }

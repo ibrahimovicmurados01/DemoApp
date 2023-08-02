@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace DemoApp.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -19,14 +19,9 @@ namespace DemoApp.Web.Controllers
     
         public IActionResult Index()
         {
-            SharedUserModel sharedUser = null;
-            // Read the cookie value
-            string jsonData = Request.Cookies["SessionUserData"];
-            if (!string.IsNullOrEmpty(jsonData))
-            {
-                // Deserialize the JSON data to the object
-                sharedUser = JsonConvert.DeserializeObject<SharedUserModel>(jsonData);
-            }
+
+            // Get the user information from the cookie
+            var sharedUser = UserFromCookie;
 
             return View(sharedUser);
         }

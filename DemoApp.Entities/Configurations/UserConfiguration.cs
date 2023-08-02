@@ -14,6 +14,13 @@ namespace DemoApp.Entities.Configurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.HasKey(x => x.Id);
+
+            // Set Username property as unique
+            builder.HasIndex(x => x.Username).IsUnique();
+
+            // Set Email property as unique
+            builder.HasIndex(x => x.Email).IsUnique();
+
             builder.Property(x => x.Username).IsRequired().HasMaxLength(250);
             builder.Property(x => x.Email).IsRequired().HasMaxLength(250);
             builder.Property(x => x.Created).ValueGeneratedOnAdd();
@@ -23,5 +30,10 @@ namespace DemoApp.Entities.Configurations
             .HasForeignKey(x => x.UserId)   // Foreign key in Contact
             .OnDelete(DeleteBehavior.Cascade);
         }
+
+
+
+      
     }
 }
+
