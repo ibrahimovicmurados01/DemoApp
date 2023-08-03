@@ -11,17 +11,19 @@ namespace DemoApp.Web.Controllers
     {
         private readonly IRepositoryWrapper _repository;
         private readonly IMapper _mapper;
-        public ContactController(IRepositoryWrapper repository, IMapper mapper)
+        private readonly ILogger<ContactController> _logger;
+        public ContactController(IRepositoryWrapper repository, IMapper mapper, ILogger<ContactController> logger)
         {
             _repository = repository;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
         {
             // Create an empty list of ContactModel
             List<ContactModel> itemList = new List<ContactModel>();
-
+    
             // Get the user information from the cookie
             var sharedUser = UserFromCookie;
             if (sharedUser != null)
@@ -85,6 +87,7 @@ namespace DemoApp.Web.Controllers
                 {
                     // Handle any exception that occurs during contact creation or saving
                     // Log the exception or show an error message to the user
+                    _logger.LogError("Contact->Create: " + ex.Message);
                     ModelState.AddModelError(string.Empty, "An error occurred while creating the contact. Please try again later.");
                 }
             }
@@ -96,61 +99,112 @@ namespace DemoApp.Web.Controllers
 
         public async Task<IActionResult> Edit(string id)
         {
-            ContactModel model = new ContactModel();
-
             var sharedUser = UserFromCookie;
-            if (sharedUser != null)
+            if (sharedUser == null)
             {
-                var contact = await _repository.Contact.FindByAsync(c => c.Id == Guid.Parse(id) && c.UserId == sharedUser.UserId);
-              
-                model = _mapper.Map<ContactModel>(contact.FirstOrDefault());
+                // Handle the case when the user is not authenticated or not found.
+                _logger.LogWarning("Contact->Edit:  Handle the case when the user is not authenticated or not found.");
+                return Unauthorized();
             }
-            return View(model);
+
+            Guid contactId = Guid.Parse(id);
+            var contact = await _repository.Contact.FindByAsync(c => c.Id == contactId && c.UserId == sharedUser.UserId);
+            var contactModel = _mapper.Map<ContactModel>(contact.SingleOrDefault());
+
+            if (contactModel == null)
+            {
+                // Handle the case when the contact is not found for the given user.
+                _logger.LogWarning("Contact->Edit: Handle the case when the contact is not found for the given user.");
+                return NotFound();
+            }
+
+            return View(contactModel);
         }
+
         [HttpPost]
-        public IActionResult Edit(ContactModel model)
+        public async Task<IActionResult> Edit(ContactModel model)
         {
+            // Check if the model data passed from the form is valid
             if (ModelState.IsValid)
             {
+                // Get the shared user from the cookie 
                 var sharedUser = UserFromCookie;
+
+                // Make sure we have a valid user
                 if (sharedUser != null)
                 {
-
+                    // Map the ContactModel to a Contact entity using AutoMapper
                     var contact = _mapper.Map<Contact>(model);
-                    _repository.Contact.UpdateAsync(contact);
-                    _repository.SaveAsync();
+             
+                    // await the UpdateAsync method to ensure the contact is updated in the repository.
+                    await _repository.Contact.UpdateAsync(contact);
+
+                    // Await the SaveAsync method to ensure the changes are persisted to the database.
+                    await _repository.SaveAsync();
+
+                    // Redirect to the "Index" action of the controller after the update is successful.
                     return RedirectToAction("Index");
                 }
-
             }
 
-        
+            // If the model data is invalid or the user is not valid, return the view with the provided model.
             return View(model);
         }
+
+
         public async Task<IActionResult> Delete(string id)
         {
-            ContactModel model = new ContactModel();
-
             var sharedUser = UserFromCookie;
-            if (sharedUser != null)
-            {
-                var contact = await _repository.Contact.FindByAsync(c => c.Id == Guid.Parse(id) && c.UserId == sharedUser.UserId);
 
-                _repository.Contact.DeleteAsync(contact.FirstOrDefault());
-                _repository.SaveAsync();
-                return RedirectToAction("Index");
+            if (sharedUser == null)
+            {
+                // Handle the case when the user is not authenticated or not found.
+                _logger.LogWarning("Contact->Delete: Handle the case when the user is not authenticated or not found.");
+                return Unauthorized();
             }
-            return View(model);
+
+            Guid contactId = Guid.Parse(id);
+            var contact = await _repository.Contact.FindByAsync(c => c.Id == contactId && c.UserId == sharedUser.UserId);
+
+            if (!contact.Any())
+            {
+                // Handle the case when the contact is not found for the given user.
+                _logger.LogWarning("Contact->Delete: Handle the case when the contact is not found for the given user..");
+                return NotFound();
+            }
+
+            //  DeleteAsync and SaveAsync are asynchronous methods in the repository.
+            await _repository.Contact.DeleteAsync(contact.SingleOrDefault());
+            await _repository.SaveAsync();
+
+            // Redirect to the "Index" action of the controller after the deletion is successful.
+            return RedirectToAction("Index");
         }
+
+
 
         public async Task<IActionResult> Detail(string id)
         {
-            Contact contact = await _repository.Contact.FindByIdAsync(Guid.Parse(id));
+            if (!Guid.TryParse(id, out Guid contactId))
+            {
+                _logger.LogWarning("Contact->Detail: Handle the case when the provided ID is not a valid GUID.");
+                // Handle the case when the provided ID is not a valid GUID.
+                return BadRequest();
+            }
+
+            Contact contact = await _repository.Contact.FindByIdAsync(contactId);
+
+            if (contact == null)
+            {
+                _logger.LogWarning("Contact->Detail:  Handle the case when the contact is not found for the given ID.");
+                // Handle the case when the contact is not found for the given ID.
+                return NotFound();
+            }
+
             var contactModel = _mapper.Map<ContactModel>(contact);
             return PartialView("_Detail", contactModel);
-
-
         }
+
 
     }
 }

@@ -46,7 +46,7 @@ namespace DemoApp.Web.Controllers
             return null;
         }
 
-        protected SharedUserModel UserFromCookie
+        public virtual SharedUserModel UserFromCookie
         {
             get
             {

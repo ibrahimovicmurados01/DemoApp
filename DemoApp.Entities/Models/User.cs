@@ -10,12 +10,11 @@ using DemoApp.Entities.Models.Contracts;
 
 namespace DemoApp.Entities.Models
 {
-  
+
     public class User : UniqueIdentifier, CreatedModifiedFeature, TombstoneFeature
     {
         [Required] public string Username { get; set; }
 
-        // TODO: Make it unique later
         [EmailAddress][Required] public string Email { get; set; }
         [Required] public string HashedPassword { get; set; }
 
@@ -24,7 +23,7 @@ namespace DemoApp.Entities.Models
         public DateTimeOffset? LastSigninDate { get; set; }
 
         #region  Dervived properties
-        public DateTimeOffset Created { get; set; }= DateTimeOffset.Now;
+        public DateTimeOffset Created { get; set; } = DateTimeOffset.Now;
         public DateTimeOffset Modified { get; set; }
         public bool Tombstoned { get; set; }
         #endregion

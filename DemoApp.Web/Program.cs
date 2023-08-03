@@ -5,10 +5,15 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Reflection;
+using Serilog;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Host.UseSerilog((context, configuration) => configuration.ReadFrom.Configuration(context.Configuration));
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddAutoMapper(typeof(MapProfile));
@@ -37,6 +42,14 @@ builder.Services.AddSession(options =>
 
 
 var app = builder.Build();
+
+Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.File("Log/log.txt", rollingInterval: RollingInterval.Day) // Set the file path and rolling interval
+            .CreateLogger();
+
+app.UseSerilogRequestLogging();
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

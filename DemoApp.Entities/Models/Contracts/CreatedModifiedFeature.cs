@@ -6,9 +6,15 @@ using System.Threading.Tasks;
 
 namespace DemoApp.Entities.Models.Contracts
 {
+    
+    // The CreatedModifiedFeature interface defines properties to track the creation and modification timestamps of an entity.
     public interface CreatedModifiedFeature
     {
-        public DateTimeOffset Created { get; set; }
-        public DateTimeOffset Modified { get; set; }
+        // Gets or sets the DateTimeOffset indicating when the entity was created.
+        DateTimeOffset Created { get; set; }
+
+        // Gets or sets the DateTimeOffset indicating when the entity was last modified.
+        DateTimeOffset Modified { get; set; }
     }
+
 }
