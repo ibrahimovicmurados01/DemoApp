@@ -34,6 +34,7 @@ Used techs:
 * Moq for mocking in unit tests
 * parameterized tests for generic CRUD usecases (functional tests). Unfortunately not everything is covered by tests.
 * xunit for running unit tests
+* Serilog for logging
 ```
 
 The code consist of **4 main projects** (`DemoApp.WEB/DemoApp.Contracts/DemoApp.Entities/DemoApp.Repositories`) and plus **2 test projects** (`DemoApp.Web.Tests/DemoApp.Repository.Tests`).
@@ -79,3 +80,8 @@ You have to run below docker commands to create docker images and then you can c
 *The mssql is deployed in this deployment.*
 
 ---
+## Run Application
+To run the DemoApp web application, follow these steps:
+
+1.Click on the following URL: ```https://demoappwebv2.azurewebsites.net/```
+2.Complete the registration process to create a new user account.
