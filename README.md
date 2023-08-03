@@ -81,9 +81,23 @@ You have to run below docker commands to create docker images and then you can c
 
 ---
 ## Run Application
-To run the DemoApp web application, follow these steps:
+To access the DemoApp web application, click on the following URL: 
+[demoappwebv2.azurewebsites.net](https://demoappwebv2.azurewebsites.net/)
 
-1.Click on the following URL: 
-```https://demoappwebv2.azurewebsites.net/```
+**Registration:**
+* Upon accessing the application, you can register as a new user by clicking on the "Register" link.
+* Fill in the required registration details, such as your email address and password, and submit the form.
+* Once registered, you will be redirected to the login page.
 
-2.Complete the registration process to create a new user account.
+**Creating and Managing Contacts:**
+* After logging in with your registered credentials, you will have access to the main features of the application.
+* Navigate to the "Contacts" section, where you can view your existing contacts and perform CRUD operations.
+* To create a new contact, click on the "Create New Contact" button and provide the necessary contact details.
+* To delete a contact, open the contact details page and click the "Delete" button.
+* To update a contact's information, click the "Edit" button on the contact details page, make changes, and save.
+* To view the details of a contact, click on the contact's name or select the "Info" option.
+
+
+**CRUD Operations:**
+
+The application supports Create, Read, Update, and Delete (CRUD) operations for managing your contacts. You can easily add, view, update, and delete contacts as needed.
