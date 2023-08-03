@@ -83,5 +83,7 @@ You have to run below docker commands to create docker images and then you can c
 ## Run Application
 To run the DemoApp web application, follow these steps:
 
-1.Click on the following URL: ```https://demoappwebv2.azurewebsites.net/```
+1.Click on the following URL: 
+```https://demoappwebv2.azurewebsites.net/```
+
 2.Complete the registration process to create a new user account.
