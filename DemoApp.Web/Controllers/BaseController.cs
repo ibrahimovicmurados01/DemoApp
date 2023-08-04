@@ -1,4 +1,5 @@
 ﻿using DemoApp.Web.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -9,6 +10,23 @@ namespace DemoApp.Web.Controllers
         private SharedUserModel _user;
         protected void CreateSessionCookie(string userName, string userId)
         {
+      
+            // Set the cookie directly without the need for a separate CookieOptions variable
+            CookieOptions options = new CookieOptions
+            {
+                Domain = "localhost", // Set the domain to "localhost".
+                Path = "/", // Set the path to a common path accessible by both applications.
+                Expires = DateTime.Now.AddDays(1), // Set an appropriate expiration date.
+                Secure = true, // Set to true if running on HTTPS.
+                HttpOnly = true, // Recommended for security reasons.
+                SameSite = SameSiteMode.Lax // Recommended to prevent CSRF attacks.
+
+            };
+
+            Response.Cookies.Append("Session_UserName", userName, options);
+            Response.Cookies.Append("Session_UserId", userId, options);
+
+
             // Create the shared object directly within the JSON serialization
             string jsonData = Newtonsoft.Json.JsonConvert.SerializeObject(new
             {
@@ -16,25 +34,35 @@ namespace DemoApp.Web.Controllers
                 UserId = userId
             });
 
-            // Set the cookie directly without the need for a separate CookieOptions variable
-            Response.Cookies.Append("SessionUserData", jsonData, new CookieOptions
-            {
-                Expires = DateTime.Now.AddDays(1),
-                Path = "/"
-            });
+            //Response.Cookies.Append("SessionUserData", jsonData, new CookieOptions
+            //{
+            //    Domain = "localhost", // Set the domain to "localhost".
+            //    Path = "/", // Set the path to a common path accessible by both applications.
+            //    Expires = DateTime.Now.AddDays(1), // Set an appropriate expiration date.
+            //    Secure = true, // Set to true if running on HTTPS.
+            //    //HttpOnly = false, // Recommended for security reasons.
+            //    SameSite = SameSiteMode.Lax // Recommended to prevent CSRF attacks.
+
+            //});
+
         }
+
 
         private SharedUserModel ReadSharedUserInfoFromCookie()
         {
             try
             {
                 // Read the cookie value
-                string jsonData = Request.Cookies["SessionUserData"];
-
-                if (!string.IsNullOrEmpty(jsonData))
+                string userName = Request.Cookies["Session_UserName"];
+                string userId = Request.Cookies["Session_UserId"];
+                if (!string.IsNullOrEmpty(userId) && !string.IsNullOrEmpty(userName))
                 {
-                    // Deserialize the JSON data to the object
-                    return JsonConvert.DeserializeObject<SharedUserModel>(jsonData);
+       
+                    return new SharedUserModel
+                    {
+                        UserId = Guid.Parse(userId),
+                        UserName = userName,
+                    };
                 }
             }
             catch (Exception ex)
