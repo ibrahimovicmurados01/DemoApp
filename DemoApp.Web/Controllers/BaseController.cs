@@ -34,17 +34,6 @@ namespace DemoApp.Web.Controllers
                 UserId = userId
             });
 
-            //Response.Cookies.Append("SessionUserData", jsonData, new CookieOptions
-            //{
-            //    Domain = "localhost", // Set the domain to "localhost".
-            //    Path = "/", // Set the path to a common path accessible by both applications.
-            //    Expires = DateTime.Now.AddDays(1), // Set an appropriate expiration date.
-            //    Secure = true, // Set to true if running on HTTPS.
-            //    //HttpOnly = false, // Recommended for security reasons.
-            //    SameSite = SameSiteMode.Lax // Recommended to prevent CSRF attacks.
-
-            //});
-
         }
 
 
