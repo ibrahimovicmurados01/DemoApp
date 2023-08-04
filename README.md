@@ -37,7 +37,7 @@ Used techs:
 * Serilog for logging
 ```
 
-The code consist of **4 main projects** (`DemoApp.WEB/DemoApp.Contracts/DemoApp.Entities/DemoApp.Repositories`) and plus **2 test projects** (`DemoApp.Web.Tests/DemoApp.Repository.Tests`).
+The code consist of **5 main projects** (`DemoApp.WEB/DemoApp.Contracts/DemoApp.Entities/DemoApp.Repositories`) and plus **1 test projects** (`DemoApp.Web.Tests`).
 
 ##### DemoApp.Repository
 ```
@@ -51,11 +51,20 @@ This project consist of entities which is used with ef core in order to be synce
 ```
 I would say that this project were supposed to include the interfaces which are going to be used between DAO layer and Web layer, but it ended up only having 2 interfaces. They can be moved to Repository project.
 ```
-##### DemoApp.Web
+##### [DemoApp.Web](https://demoappwebv2.azurewebsites.net/)
 ```
 Web project is using the `MVC pattern` (check in the internet). GET/PUT/POST/DELETE Controller action are separated into different classes and generic implementations are provided for standard usecase.
 The flow starts from the Cotrollers package and from there moves to Repositories pattern which is using the DAO and Mapper. Mappers are provided also in the project in order to separate the `Entities` and `Models`.
 
+```
+##### DemoApp.ClassicUI
+```
+The ClassicUI project uses Classic ASP (Active Server Pages) technology. To achieve session data sharing between the ClassicUI project and another web project, we leverage cookies from the Web project.
+
+Here's a step-by-step guide to enable session data sharing:
+* Ensure your Web project sends cookies with the following names: "Session_UserName" and "Session_UserId" containing the appropriate values.
+* In the Classic ASP project, we read these cookies and then store the values in session variables named "UserName" and "UserId."
+ 
 ```
 
 ---
