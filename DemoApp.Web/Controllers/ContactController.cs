@@ -29,7 +29,7 @@ namespace DemoApp.Web.Controllers
             if (sharedUser != null)
             {
                 // Retrieve contacts associated with the current user from the database
-                var contacts = await _repository.Contact.FindByAsync(x => x.UserId == sharedUser.UserId);
+                var contacts = _repository.Contact.GetAll().Where(x => x.UserId == sharedUser.UserId);
 
                 // Map the contacts to ContactModel using the _mapper
                 itemList = _mapper.Map<List<ContactModel>>(contacts);
@@ -80,6 +80,7 @@ namespace DemoApp.Web.Controllers
                     // Save the changes asynchronously to the database
                     _repository.SaveAsync();
 
+                    TempData["success"] = "Contact added succecfully";
                     // Redirect to the "Index" action on successful creation
                     return RedirectToAction("Index");
                 }
@@ -142,6 +143,7 @@ namespace DemoApp.Web.Controllers
                     // Await the SaveAsync method to ensure the changes are persisted to the database.
                     await _repository.SaveAsync();
 
+                    TempData["success"] = "Contact updated succecfully";
                     // Redirect to the "Index" action of the controller after the update is successful.
                     return RedirectToAction("Index");
                 }
@@ -176,6 +178,8 @@ namespace DemoApp.Web.Controllers
             //  DeleteAsync and SaveAsync are asynchronous methods in the repository.
             await _repository.Contact.DeleteAsync(contact.SingleOrDefault());
             await _repository.SaveAsync();
+
+            TempData["success"] = "Contact deleted succecfully";
 
             // Redirect to the "Index" action of the controller after the deletion is successful.
             return RedirectToAction("Index");

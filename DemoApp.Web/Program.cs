@@ -1,13 +1,9 @@
 using DemoApp.Entities;
 using DemoApp.Web.Extensions;
 using DemoApp.Web.Mappers;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Reflection;
 using Serilog;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,7 +28,6 @@ builder.Services.AddDbContext<RepositoryContext>(x =>
 builder.Services.AddRepository();
 
 //builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
 
 var app = builder.Build();
 
@@ -68,3 +63,4 @@ app.MapControllerRoute(
     pattern: "{controller=Account}/{action=Login}/{id?}");
 
 app.Run();
+

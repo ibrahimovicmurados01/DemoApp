@@ -66,7 +66,6 @@ Here's a step-by-step guide to enable session data sharing:
 * In the Classic ASP project, we read these cookies and then store the values in session variables named "UserName" and "UserId."
  
 
-
 ```
  * reference [Code Project ](https://www.codeproject.com/Articles/30723/Handle-session-variable-problems-between-classic-A)
 ---

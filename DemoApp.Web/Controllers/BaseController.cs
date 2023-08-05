@@ -14,7 +14,7 @@ namespace DemoApp.Web.Controllers
             // Set the cookie directly without the need for a separate CookieOptions variable
             CookieOptions options = new CookieOptions
             {
-                Domain = "localhost", // Set the domain to "localhost".
+               // Domain = "azurewebsites.net", // Set the domain to "localhost".
                 Path = "/", // Set the path to a common path accessible by both applications.
                 Expires = DateTime.Now.AddDays(1), // Set an appropriate expiration date.
                 Secure = true, // Set to true if running on HTTPS.
