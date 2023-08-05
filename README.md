@@ -35,6 +35,8 @@ Used techs:
 * parameterized tests for generic CRUD usecases (functional tests). Unfortunately not everything is covered by tests.
 * xunit for running unit tests
 * Serilog for logging
+* Bootstrap 5
+* Toaster 
 ```
 
 The code consist of **5 main projects** (`DemoApp.WEB/DemoApp.Contracts/DemoApp.Entities/DemoApp.Repositories`) and plus **1 test projects** (`DemoApp.Web.Tests`).
@@ -55,6 +57,7 @@ I would say that this project were supposed to include the interfaces which are 
 ```
 Web project is using the `MVC pattern` (check in the internet). GET/PUT/POST/DELETE Controller action are separated into different classes and generic implementations are provided for standard usecase.
 The flow starts from the Cotrollers package and from there moves to Repositories pattern which is using the DAO and Mapper. Mappers are provided also in the project in order to separate the `Entities` and `Models`.
+Also Web project is using Bootsrap 5 and toastr web framework for design 
 
 ```
 ##### DemoApp.ClassicUI
